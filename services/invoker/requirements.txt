@@ -1,0 +1,4 @@
+aiohttp == 3.10.2
+fastapi==0.111.1
+cachetools==5.4.0
+asyncache==0.3.1

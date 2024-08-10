@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+
+  recommendations_generator:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: 'generator'
+    ports:
+      - "0.0.0.0:8890:8890"
+  recommendations_invoker:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: 'invoker'
+    ports:
+      - "0.0.0.0:8891:8891"
+    environment:
+      MODEL_REGISTRY: 'services/resources/model_registry.json'
+      GENERATOR_URL: 'http://recommendations_generator:8890'
