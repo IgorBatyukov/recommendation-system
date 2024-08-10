@@ -19,3 +19,4 @@ services:
     environment:
       MODEL_REGISTRY: 'resources/model_registry.json'
       GENERATOR_URL: 'http://recommendations_generator:8890'
+      NUM_MODELS: 3
