@@ -9,7 +9,7 @@ ENV PYTHONPATH=${WORK_DIR}
 WORKDIR ${WORK_DIR}
 
 COPY services/${SERVICE_NAME} services/${SERVICE_NAME}
-COPY services/resources services/resources
+COPY resources resources
 
 RUN pip install --no-cache-dir -r services/${SERVICE_NAME}/requirements.txt
 
