@@ -19,6 +19,9 @@ redis_cache.setup(REDIS_URL)
 
 
 def get_model_names(registry_path: str, num: int) -> list[str]:
+    """
+    Returns list of `num` random model names from the model registry.
+    """
     with open(registry_path, 'r') as registry:
         js = json.loads(registry.read())
         model_names = [
@@ -28,6 +31,9 @@ def get_model_names(registry_path: str, num: int) -> list[str]:
 
 
 async def call_generator(url: str, model_name: str, viewer_id: str) -> Awaitable[dict]:
+    """
+    Calls Generator service with a given `viewer_id` and `model_name`.
+    """
     async with aiohttp.ClientSession() as session:
         endpoint = urljoin(url, '/generate')
         data = {
@@ -39,12 +45,19 @@ async def call_generator(url: str, model_name: str, viewer_id: str) -> Awaitable
 
 
 async def runcascade(viewer_id: str, model_names: list[str]) -> list[Any]:
+    """
+    Send parallel requests to the Generator service.
+    """
     return [
         await call_generator(GENERATOR_URL, model, viewer_id) for model in model_names
     ]
 
 
 async def get_recommendations(viewer_id: str, model_names: list[str]) -> list[Any]:
+    """
+    For the given `viewer_id` and `model_names` fetch data either from cache or
+    from Generator service.
+    """
     cached_data = await local_cache.get(viewer_id)
     if cached_data:
         return cached_data
@@ -59,6 +72,10 @@ async def get_recommendations(viewer_id: str, model_names: list[str]) -> list[An
     return data
 
 
-async def recommend(user_id: str) -> list[Any]:
+async def recommend(viewer_id: str) -> list[Any]:
+    """
+    Get random NUM_MODELS model name from teh registry and retrieve
+    recommendations for the given viewer_id.
+    """
     model_names = get_model_names(MODEL_REGISTRY_PATH, NUM_MODELS)
-    return await get_recommendations(user_id, model_names)
+    return await get_recommendations(viewer_id, model_names)
