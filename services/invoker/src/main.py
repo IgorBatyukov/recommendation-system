@@ -1,9 +1,11 @@
 import uvicorn
 from fastapi import FastAPI
 
+from libs.exception_handlers import general_exception_handler, CustomException
 from services.invoker.src.utils import recommend
 
 app = FastAPI()
+app.add_exception_handler(CustomException, general_exception_handler)
 
 
 @app.get('/')

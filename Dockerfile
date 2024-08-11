@@ -10,6 +10,7 @@ WORKDIR ${WORK_DIR}
 
 COPY services/${SERVICE_NAME} services/${SERVICE_NAME}
 COPY resources resources
+COPY libs libs
 
 RUN pip install --no-cache-dir -r services/${SERVICE_NAME}/requirements.txt
 
