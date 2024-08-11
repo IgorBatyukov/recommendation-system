@@ -12,7 +12,7 @@ async def health_check():
 
 
 @app.get('/recommend')
-async def get_recommendation(viewer_id: int):
+async def get_recommendation(viewer_id: str):
     return await recommend(viewer_id)
 
 

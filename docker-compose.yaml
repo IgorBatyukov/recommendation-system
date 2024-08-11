@@ -9,6 +9,18 @@ services:
         SERVICE_NAME: 'generator'
     ports:
       - "0.0.0.0:8890:8890"
+
+  redis_cache:
+    image: redis:6.2-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
   recommendations_invoker:
     build:
       context: .
@@ -16,7 +28,14 @@ services:
         SERVICE_NAME: 'invoker'
     ports:
       - "0.0.0.0:8891:8891"
+    depends_on:
+      redis_cache:
+        condition: service_healthy
     environment:
       MODEL_REGISTRY: 'resources/model_registry.json'
       GENERATOR_URL: 'http://recommendations_generator:8890'
-      NUM_MODELS: 3
+      NUM_MODELS: 5
+      REDIS_URL: 'redis://redis_cache'
+
+volumes:
+  redis_data:
