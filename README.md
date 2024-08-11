@@ -1,8 +1,11 @@
 # Simple Recommendation System
 
-The system consists of two services:
+This system consists of two services:
 
-FastAPI auto generated API documentation is available in both services by `/docs` endpoint.
+1. Generator: Generates recommendations.
+2. Invoker: Retrieves recommendations and checks the cache.
+
+Both services offer auto-generated FastAPI documentation accessible at the /docs endpoint.
 
 ### Generator
 This service is a Python FastAPI application with a POST /generate endpoint. 
