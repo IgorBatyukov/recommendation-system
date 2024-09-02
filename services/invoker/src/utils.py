@@ -6,7 +6,10 @@ from http import HTTPStatus
 from typing import Awaitable, Any
 from urllib.parse import urljoin
 
+import aiofiles
+
 import aiohttp
+import redis.exceptions
 from aiohttp.client_exceptions import ClientConnectionError
 from cashews import Cache
 
@@ -25,13 +28,14 @@ redis_cache.setup(REDIS_URL)
 log = logging.getLogger('uvicorn.info')
 
 
-def get_model_names(registry_path: str, num: int) -> list[str]:
+async def get_model_names(registry_path: str, num: int) -> list[str]:
     """
     Returns list of `num` random model names from the model registry.
     """
     try:
-        with open(registry_path, 'r') as registry:
-            js = json.loads(registry.read())
+        async with aiofiles.open(registry_path, 'r') as registry:
+            model_registry = await registry.read()
+            js = json.loads(model_registry)
             model_names = [
                 model['name'] for model in js['models']
             ]
@@ -99,7 +103,7 @@ async def recommend(viewer_id: str) -> list[Any]:
     recommendations for the given viewer_id.
     """
     try:
-        model_names = get_model_names(MODEL_REGISTRY_PATH, NUM_MODELS)
+        model_names = await get_model_names(MODEL_REGISTRY_PATH, NUM_MODELS)
         return await get_recommendations(viewer_id, model_names)
     except CustomException:
         raise
